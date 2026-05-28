@@ -12,7 +12,7 @@
     resize();
 
     // State
-    let playerCharacter = "sukuna"; // Current player character
+    let playerCharacter = "sukuna";
     let playerX = window.innerWidth / 2;
     let playerY = window.innerHeight / 2;
     let targetX = window.innerWidth * 0.75;
@@ -24,11 +24,7 @@
     let domainType = null;
     let domainTimer = 0;
     let comboCount = 0;
-    let lastAttackTime = 0;
-    let isMoving = false;
     let moveDirection = { x: 0, y: 0 };
-    let currentAbility = null;
-    let abilityCharge = 0;
     let battleActive = true;
 
     class Particle {
@@ -61,14 +57,13 @@
         }
     }
 
-    // SUKUNA - YOUR CHARACTER
+    // CHARACTER DRAWING FUNCTIONS
     function drawSukuna(x, y, scale, opacity = 1) {
         ctx.save();
         ctx.globalAlpha = opacity;
         ctx.translate(x, y);
         ctx.scale(scale, scale);
         
-        // Hair - spiky pink
         ctx.fillStyle = "#ffb3d1";
         for (let i = 0; i < 8; i++) {
             const angle = (i / 8) * Math.PI * 2;
@@ -79,13 +74,11 @@
             ctx.fill();
         }
         
-        // Head
         ctx.fillStyle = "#ffdbac";
         ctx.beginPath();
         ctx.ellipse(0, -12, 11, 13, 0, 0, Math.PI * 2);
         ctx.fill();
         
-        // Eyes - demonic
         ctx.fillStyle = "#000000";
         ctx.beginPath();
         ctx.arc(-4, -14, 2.5, 0, Math.PI * 2);
@@ -94,23 +87,19 @@
         ctx.arc(4, -14, 2.5, 0, Math.PI * 2);
         ctx.fill();
         
-        // Forehead markings
         ctx.fillStyle = "#ff1744";
         ctx.fillRect(-8, -18, 4, 3);
         ctx.fillRect(4, -18, 4, 3);
         
-        // Body - kimono
         ctx.fillStyle = "#e5e0d8";
         ctx.fillRect(-13, 0, 26, 32);
         ctx.fillStyle = "#d4cfc0";
         ctx.fillRect(-13, 0, 26, 5);
         
-        // Arms - muscular
         ctx.fillStyle = "#ffdbac";
         ctx.fillRect(-15, 5, 5, 20);
         ctx.fillRect(10, 5, 5, 20);
         
-        // Aura glow
         ctx.strokeStyle = "rgba(255, 179, 209, 0.4)";
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -120,166 +109,288 @@
         ctx.restore();
     }
 
-    // SUKUNA ABILITIES
+    function drawGojo(x, y, scale, opacity = 1) {
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        ctx.translate(x, y);
+        ctx.scale(scale, scale);
+        
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.ellipse(-8, -22, 14, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = "#ffdbac";
+        ctx.beginPath();
+        ctx.ellipse(0, -12, 10, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(-10, -14, 20, 4);
+        ctx.fillRect(-10, -16, 3, 6);
+        ctx.fillRect(7, -16, 3, 6);
+        
+        ctx.fillStyle = "#1a1a24";
+        ctx.fillRect(-12, 0, 24, 28);
+        ctx.fillStyle = "#3a3a54";
+        ctx.fillRect(-12, 0, 24, 4);
+        
+        ctx.fillStyle = "#ffdbac";
+        ctx.fillRect(-14, 4, 4, 18);
+        ctx.fillRect(10, 4, 4, 18);
+        
+        ctx.strokeStyle = "rgba(0, 212, 255, 0.4)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 30, 35, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        ctx.restore();
+    }
+
+    function drawYuji(x, y, scale, opacity = 1) {
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        ctx.translate(x, y);
+        ctx.scale(scale, scale);
+        
+        ctx.fillStyle = "#ff6b9d";
+        ctx.beginPath();
+        ctx.ellipse(0, -22, 10, 9, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = "#ffdbac";
+        ctx.beginPath();
+        ctx.ellipse(0, -12, 10, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = "#ff3366";
+        ctx.fillRect(-11, -8, 22, 8);
+        ctx.fillRect(-12, 0, 24, 4);
+        
+        ctx.fillStyle = "#1a243a";
+        ctx.fillRect(-12, 4, 24, 24);
+        
+        ctx.fillStyle = "#ffdbac";
+        ctx.fillRect(-14, 6, 4, 18);
+        ctx.fillRect(10, 6, 4, 18);
+        
+        ctx.strokeStyle = "rgba(255, 107, 157, 0.4)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 30, 35, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        ctx.restore();
+    }
+
+    function drawTodo(x, y, scale, opacity = 1) {
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        ctx.translate(x, y);
+        ctx.scale(scale, scale);
+        
+        ctx.fillStyle = "#1a1a1a";
+        ctx.beginPath();
+        ctx.ellipse(0, -24, 8, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = "#ffdbac";
+        ctx.beginPath();
+        ctx.ellipse(0, -10, 11, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = "#9c27b0";
+        ctx.beginPath();
+        ctx.moveTo(6, -18);
+        ctx.lineTo(8, -8);
+        ctx.lineTo(7, -8);
+        ctx.lineTo(5, -18);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.fillStyle = "#ffdbac";
+        ctx.fillRect(-10, 0, 20, 14);
+        
+        ctx.strokeStyle = "#ffb380";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(-2, 0);
+        ctx.lineTo(-2, 14);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(2, 0);
+        ctx.lineTo(2, 14);
+        ctx.stroke();
+        
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(-11, 14, 22, 14);
+        
+        ctx.fillStyle = "#ffdbac";
+        ctx.fillRect(-13, 4, 4, 18);
+        ctx.fillRect(9, 4, 4, 18);
+        
+        ctx.strokeStyle = "rgba(156, 39, 176, 0.4)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 30, 35, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        ctx.restore();
+    }
+
+    // ABILITIES FOR EACH CHARACTER
     const abilities = {
         sukuna: [
-            {
-                name: "Slashing Technique",
-                key: "q",
-                cooldown: 0,
-                maxCooldown: 30,
-                damage: 15,
-                execute: function() {
-                    const angle = Math.atan2(targetY - playerY, targetX - playerX);
-                    for (let i = 0; i < 20; i++) {
-                        const spreadAngle = angle + (Math.random() - 0.5) * 0.5;
-                        particles.push(new Particle(
-                            playerX + Math.cos(angle) * 30,
-                            playerY + Math.sin(angle) * 30,
-                            Math.cos(spreadAngle) * 6,
-                            Math.sin(spreadAngle) * 6,
-                            "#ff1744",
-                            5
-                        ));
-                    }
-                }
-            },
-            {
-                name: "Fuga - Divine Flame",
-                key: "w",
-                cooldown: 0,
-                maxCooldown: 60,
-                damage: 35,
-                execute: function() {
-                    const dx = targetX - playerX;
-                    const dy = targetY - playerY;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    
-                    for (let i = 0; i < 40; i++) {
-                        const angle = (i / 40) * Math.PI * 2;
-                        particles.push(new Particle(
-                            playerX,
-                            playerY,
-                            Math.cos(angle) * 7,
-                            Math.sin(angle) * 7,
-                            ["#ff6600", "#ffaa00", "#ff3300"][Math.floor(Math.random() * 3)],
-                            6,
-                            80
-                        ));
-                    }
-                    
-                    targetHealth -= this.damage;
-                    comboCount += 2;
-                }
-            },
-            {
-                name: "Shrine Domain",
-                key: "e",
-                cooldown: 0,
-                maxCooldown: 120,
-                damage: 0,
-                execute: function() {
-                    inDomain = true;
-                    domainType = "shrine";
-                    domainTimer = 180;
-                    comboCount += 5;
-                }
-            },
-            {
-                name: "Dismantle",
-                key: "r",
-                cooldown: 0,
-                maxCooldown: 45,
-                damage: 25,
-                execute: function() {
-                    const angle = Math.atan2(targetY - playerY, targetX - playerX);
-                    for (let i = 0; i < 15; i++) {
-                        const speed = 5 + Math.random() * 4;
-                        particles.push(new Particle(
-                            playerX,
-                            playerY,
-                            Math.cos(angle + (Math.random() - 0.5) * 0.8) * speed,
-                            Math.sin(angle + (Math.random() - 0.5) * 0.8) * speed,
-                            "#ffb3d1",
-                            7
-                        ));
-                    }
-                    targetHealth -= this.damage;
-                }
-            }
+            { name: "Slashing", key: "q", cooldown: 0, maxCooldown: 30, damage: 15, color: "#ff1744" },
+            { name: "Fuga", key: "w", cooldown: 0, maxCooldown: 60, damage: 35, color: "#ff6600" },
+            { name: "Domain", key: "e", cooldown: 0, maxCooldown: 120, damage: 0, color: "#ff1493" },
+            { name: "Dismantle", key: "r", cooldown: 0, maxCooldown: 45, damage: 25, color: "#ffb3d1" }
+        ],
+        gojo: [
+            { name: "Limitless", key: "q", cooldown: 0, maxCooldown: 35, damage: 20, color: "#00ffff" },
+            { name: "Infinity Void", key: "w", cooldown: 0, maxCooldown: 65, damage: 40, color: "#0088ff" },
+            { name: "Blue Domain", key: "e", cooldown: 0, maxCooldown: 130, damage: 0, color: "#00d4ff" },
+            { name: "Red Technique", key: "r", cooldown: 0, maxCooldown: 50, damage: 30, color: "#ff3300" }
+        ],
+        yuji: [
+            { name: "Martial Arts", key: "q", cooldown: 0, maxCooldown: 25, damage: 18, color: "#ff6b9d" },
+            { name: "Sukuna Slash", key: "w", cooldown: 0, maxCooldown: 55, damage: 32, color: "#ff1744" },
+            { name: "Vessel Domain", key: "e", cooldown: 0, maxCooldown: 100, damage: 0, color: "#ff69b4" },
+            { name: "Black Flash", key: "r", cooldown: 0, maxCooldown: 70, damage: 45, color: "#000000" }
+        ],
+        todo: [
+            { name: "Kick", key: "q", cooldown: 0, maxCooldown: 28, damage: 17, color: "#9c27b0" },
+            { name: "Boogie Woogie", key: "w", cooldown: 0, maxCooldown: 80, damage: 0, color: "#ffff00" },
+            { name: "Purple Domain", key: "e", cooldown: 0, maxCooldown: 140, damage: 0, color: "#9c27b0" },
+            { name: "Ultimate Punch", key: "r", cooldown: 0, maxCooldown: 60, damage: 38, color: "#6a1b9a" }
         ]
     };
 
-    // DOMAIN EXPANSION EFFECTS
+    // DOMAIN EFFECTS
     function drawDomain() {
         if (domainType === "shrine") {
             ctx.save();
             ctx.fillStyle = "rgba(139, 0, 139, 0.1)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Shrine barriers
             ctx.strokeStyle = "rgba(255, 100, 200, 0.5)";
             ctx.lineWidth = 3;
-            
             for (let i = 0; i < 8; i++) {
                 const angle = (i / 8) * Math.PI * 2;
                 const x1 = canvas.width / 2 + Math.cos(angle) * 200;
                 const y1 = canvas.height / 2 + Math.sin(angle) * 200;
                 const x2 = canvas.width / 2 + Math.cos(angle + Math.PI) * 200;
                 const y2 = canvas.height / 2 + Math.sin(angle + Math.PI) * 200;
-                
                 ctx.beginPath();
                 ctx.moveTo(x1, y1);
                 ctx.lineTo(x2, y2);
                 ctx.stroke();
             }
-            
-            // Center circle
             ctx.strokeStyle = "rgba(255, 50, 150, 0.7)";
             ctx.lineWidth = 4;
             ctx.beginPath();
             ctx.arc(canvas.width / 2, canvas.height / 2, 250, 0, Math.PI * 2);
             ctx.stroke();
-            
+            ctx.restore();
+        } else if (domainType === "gojo") {
+            ctx.save();
+            ctx.fillStyle = "rgba(0, 136, 255, 0.08)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "rgba(0, 212, 255, 0.4)";
+            ctx.lineWidth = 3;
+            for (let i = 0; i < 12; i++) {
+                const angle = (i / 12) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2, canvas.height / 2, 150 + i * 20, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.restore();
+        } else if (domainType === "yuji") {
+            ctx.save();
+            ctx.fillStyle = "rgba(255, 107, 157, 0.1)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "rgba(255, 69, 180, 0.5)";
+            ctx.lineWidth = 3;
+            for (let i = 0; i < 6; i++) {
+                const angle = (i / 6) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2, canvas.height / 2, 120 + i * 30, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.restore();
+        } else if (domainType === "todo") {
+            ctx.save();
+            ctx.fillStyle = "rgba(156, 39, 176, 0.08)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "rgba(156, 39, 176, 0.5)";
+            ctx.lineWidth = 3;
+            for (let i = 0; i < 10; i++) {
+                const angle = (i / 10) * Math.PI * 2;
+                const x1 = canvas.width / 2 + Math.cos(angle) * 200;
+                const y1 = canvas.height / 2 + Math.sin(angle) * 200;
+                const x2 = canvas.width / 2 + Math.cos(angle + Math.PI / 10) * 180;
+                const y2 = canvas.height / 2 + Math.sin(angle + Math.PI / 10) * 180;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            }
             ctx.restore();
         }
     }
 
-    // MOVEMENT CONTROLS
+    // ABILITY EXECUTION
+    function executeAbility(char, abilityIndex) {
+        const ability = abilities[char][abilityIndex];
+        const angle = Math.atan2(targetY - playerY, targetX - playerX);
+
+        if (ability.name === "Domain") {
+            inDomain = true;
+            domainType = char === "sukuna" ? "shrine" : char === "gojo" ? "gojo" : char === "yuji" ? "yuji" : "todo";
+            domainTimer = 200;
+        } else {
+            for (let i = 0; i < 30; i++) {
+                particles.push(new Particle(
+                    playerX + Math.cos(angle) * 30,
+                    playerY + Math.sin(angle) * 30,
+                    Math.cos(angle + (Math.random() - 0.5) * 0.6) * (5 + Math.random() * 4),
+                    Math.sin(angle + (Math.random() - 0.5) * 0.6) * (5 + Math.random() * 4),
+                    ability.color,
+                    5
+                ));
+            }
+            targetHealth -= ability.damage;
+            comboCount += Math.ceil(ability.damage / 10);
+        }
+    }
+
+    // KEYBOARD CONTROLS
     document.addEventListener("keydown", (e) => {
         const key = e.key.toLowerCase();
         
-        // Movement
+        if (key === "1") playerCharacter = "sukuna";
+        if (key === "2") playerCharacter = "gojo";
+        if (key === "3") playerCharacter = "yuji";
+        if (key === "4") playerCharacter = "todo";
+        
         if (key === "arrowup" || key === "w") moveDirection.y = -1;
         if (key === "arrowdown" || key === "s") moveDirection.y = 1;
         if (key === "arrowleft" || key === "a") moveDirection.x = -1;
         if (key === "arrowright" || key === "d") moveDirection.x = 1;
         
-        // Abilities
-        abilities.sukuna.forEach(ability => {
+        abilities[playerCharacter].forEach((ability, i) => {
             if (key === ability.key && ability.cooldown <= 0) {
-                ability.execute();
+                executeAbility(playerCharacter, i);
                 ability.cooldown = ability.maxCooldown;
-                lastAttackTime = Date.now();
             }
         });
         
-        if (key === "space") {
-            // Dash towards target
+        if (key === " ") {
             const angle = Math.atan2(targetY - playerY, targetX - playerX);
             playerX += Math.cos(angle) * 80;
             playerY += Math.sin(angle) * 80;
-            
             for (let i = 0; i < 30; i++) {
-                const dashAngle = Math.random() * Math.PI * 2;
-                particles.push(new Particle(
-                    playerX,
-                    playerY,
-                    Math.cos(dashAngle) * 5,
-                    Math.sin(dashAngle) * 5,
-                    "#ffb3d1",
-                    4
-                ));
+                particles.push(new Particle(playerX + Math.random() * 20 - 10, playerY + Math.random() * 20 - 10, Math.random() * 6 - 3, Math.random() * 6 - 3, "#ffffff", 4));
             }
         }
     }, true);
@@ -292,7 +403,6 @@
         if (key === "arrowright" || key === "d") moveDirection.x = 0;
     }, true);
 
-    // MOUSE CONTROLS - Move towards click
     canvas.addEventListener("click", (e) => {
         const moveSpeed = 15;
         const dx = e.clientX - playerX;
@@ -302,43 +412,28 @@
         if (dist > 20) {
             playerX += (dx / dist) * moveSpeed;
             playerY += (dy / dist) * moveSpeed;
-            
-            // Trail effect
             for (let i = 0; i < 15; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                particles.push(new Particle(
-                    playerX + Math.random() * 20 - 10,
-                    playerY + Math.random() * 20 - 10,
-                    Math.cos(angle) * 3,
-                    Math.sin(angle) * 3,
-                    "#ffb3d1",
-                    3
-                ));
+                particles.push(new Particle(playerX + Math.random() * 20 - 10, playerY + Math.random() * 20 - 10, Math.cos(Math.random() * Math.PI * 2) * 3, Math.sin(Math.random() * Math.PI * 2) * 3, "#ffffff", 3));
             }
         }
     });
 
-    // GAME LOOP
+    // MAIN GAME LOOP
     function gameLoop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Update cooldowns
-        abilities.sukuna.forEach(ability => {
+        abilities[playerCharacter].forEach(ability => {
             if (ability.cooldown > 0) ability.cooldown--;
         });
         
-        // Player movement via keyboard
         if (moveDirection.x !== 0 || moveDirection.y !== 0) {
             const moveSpeed = 8;
             playerX += moveDirection.x * moveSpeed;
             playerY += moveDirection.y * moveSpeed;
-            
-            // Keep in bounds
             playerX = Math.max(50, Math.min(canvas.width - 50, playerX));
             playerY = Math.max(50, Math.min(canvas.height - 50, playerY));
         }
         
-        // Domain effect
         if (inDomain) {
             drawDomain();
             domainTimer--;
@@ -348,7 +443,6 @@
             }
         }
         
-        // Draw target (enemy)
         ctx.fillStyle = "#ff3300";
         ctx.shadowColor = "#ff0000";
         ctx.shadowBlur = 20;
@@ -356,10 +450,11 @@
         ctx.arc(targetX, targetY, 25, 0, Math.PI * 2);
         ctx.fill();
         
-        // Draw player
-        drawSukuna(playerX, playerY, 1.2);
+        if (playerCharacter === "sukuna") drawSukuna(playerX, playerY, 1.2);
+        else if (playerCharacter === "gojo") drawGojo(playerX, playerY, 1.2);
+        else if (playerCharacter === "yuji") drawYuji(playerX, playerY, 1.2);
+        else if (playerCharacter === "todo") drawTodo(playerX, playerY, 1.2);
         
-        // Update and draw particles
         ctx.shadowBlur = 0;
         for (let i = particles.length - 1; i >= 0; i--) {
             particles[i].update();
@@ -367,35 +462,32 @@
             if (particles[i].life <= 0) particles.splice(i, 1);
         }
         
-        // HUD
         ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
         ctx.font = "bold 14px Arial";
         ctx.textAlign = "left";
         ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
         ctx.shadowBlur = 8;
         
-        ctx.fillText(`SUKUNA - Health: ${playerHealth}`, 20, 40);
+        ctx.fillText(`${playerCharacter.toUpperCase()} - Health: ${playerHealth}`, 20, 40);
         ctx.fillText(`Enemy Health: ${Math.max(0, targetHealth)}`, 20, 65);
         ctx.fillText(`Combo: ${comboCount}x`, 20, 90);
         
         if (inDomain) {
             ctx.fillStyle = "rgba(255, 100, 200, 0.9)";
-            ctx.font = "bold 20px Arial";
-            ctx.fillText(`⚡ SHRINE DOMAIN ACTIVE ⚡`, canvas.width / 2 - 150, 50);
+            ctx.font = "bold 18px Arial";
+            const domainNames = { shrine: "SHRINE DOMAIN", gojo: "BLUE DOMAIN", yuji: "VESSEL DOMAIN", todo: "PURPLE DOMAIN" };
+            ctx.fillText(`⚡ ${domainNames[domainType]} ⚡`, canvas.width / 2 - 150, 50);
         }
         
-        // Ability display
         ctx.fillStyle = "rgba(0, 200, 255, 0.9)";
         ctx.font = "bold 12px monospace";
-        ctx.textAlign = "left";
-        abilities.sukuna.forEach((ability, i) => {
+        abilities[playerCharacter].forEach((ability, i) => {
             const cooldownText = ability.cooldown > 0 ? `[${ability.cooldown}]` : "[READY]";
             ctx.fillText(`${ability.key.toUpperCase()}: ${ability.name} ${cooldownText}`, 20, canvas.height - 100 + i * 25);
         });
         
-        ctx.fillText(`SPACE: Dash | CLICK/WASD: Move | SHIFT: Sprint`, 20, canvas.height - 35);
+        ctx.fillText(`[1]SUKUNA [2]GOJO [3]YUJI [4]TODO | SPACE: Dash | CLICK/WASD: Move`, 20, canvas.height - 35);
         
-        // Win condition
         if (targetHealth <= 0) {
             ctx.fillStyle = "rgba(255, 215, 0, 0.95)";
             ctx.font = "bold 40px Arial";
@@ -406,11 +498,10 @@
         }
         
         ctx.shadowBlur = 0;
-        
         requestAnimationFrame(gameLoop);
     }
     
     gameLoop();
-    console.log("%c🔥 SUKUNA BATTLE MODE ACTIVATED 🔥", "color: #ff1744; font-size: 18px; font-weight: bold;");
-    console.log("%cQ: Slashing | W: Fuga | E: Domain | R: Dismantle | SPACE: Dash | CLICK/WASD: Move", "color: #ffb3d1; font-size: 12px;");
+    console.log("%c🔥 JJK BATTLE ARENA 🔥", "color: #ff1744; font-size: 18px; font-weight: bold;");
+    console.log("%c[1]SUKUNA [2]GOJO [3]YUJI [4]TODO | Q/W/E/R Abilities | SPACE: Dash | WASD/CLICK: Move", "color: #ffb3d1; font-size: 12px;");
 })();
